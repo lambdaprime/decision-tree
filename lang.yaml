@@ -1,0 +1,12 @@
+_name: "Which language to use for new project"
+embedded?:
+  "yes": c
+  "no": 
+    realtime?:
+      "yes": c++
+      target:
+        mobile:
+          - java
+          - objective C
+        client:
+          - java

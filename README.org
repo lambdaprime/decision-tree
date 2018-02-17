@@ -1,0 +1,18 @@
+
+*decision-tree* - application which reads a decision tree from the YAML file and renders it using JavaFX TreeView control.
+
+lambdaprime <id.blackmesa@gmail.com>
+
+* Usage
+
+java -jar decision-tree.jar YAML_FILE
+
+Where: 
+
+YAML_FILE - file with serialized decision tree in YAML format
+
+* Examples
+
+#+BEGIN_EXAMPLE
+java -jar decision-tree.jar lang.yaml
+#+END_EXAMPLE

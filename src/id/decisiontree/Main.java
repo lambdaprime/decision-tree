@@ -1,0 +1,75 @@
+package id.decisiontree;
+
+
+import static java.lang.System.exit;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import org.yaml.snakeyaml.Yaml;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+
+    private static final Object NAME = "_name";
+    private static Yaml yaml = new Yaml();
+    private static Map<Object, Object> map;
+    
+    void dfs(Map<Object, Object> m, TreeItem<String> item) {
+        for (Map.Entry<Object, Object> e: m.entrySet()) {
+            if (NAME.equals(e.getKey()))
+                continue;
+            TreeItem<String> newItem = new TreeItem<>(e.getKey().toString());
+            item.getChildren().add(newItem);
+            if (e.getValue() instanceof Map)
+                dfs((Map<Object, Object>) e.getValue(), newItem);
+            if (e.getValue() instanceof List) {
+                List<String> ll = (List<String>) e.getValue();
+                ll.stream()
+                    .map(TreeItem<String>::new)
+                    .forEach(newItem.getChildren()::add);
+            }
+            if (e.getValue() instanceof String)
+                newItem.getChildren().add(new TreeItem<String>((String) e.getValue()));
+        }
+    }
+    
+    @SuppressWarnings("resource")
+    private static void usage() throws IOException {
+        Scanner scanner = new Scanner(Main.class.getResource("README.org").openStream())
+                .useDelimiter("\n");
+        while (scanner.hasNext())
+            System.out.println(scanner.next());
+    }
+    
+    @Override
+    public void start(Stage primaryStage) {
+        StackPane root = new StackPane();
+        TreeItem<String> rootItem = new TreeItem<>((String)map.getOrDefault(NAME, "unknown"));
+        dfs(map, rootItem);
+        TreeView<String> tree = new TreeView<>(rootItem);
+        Scene scene = new Scene(root, 500, 250);
+        root.getChildren().add(tree);
+        primaryStage.setTitle("Decision tree");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+    
+    public static void main(String[] args) throws IOException {
+        if (args.length == 0) {
+            usage();
+            exit(1);
+        }
+        map = yaml.load(new FileReader(args[0]));
+        launch(args);
+    }
+}
