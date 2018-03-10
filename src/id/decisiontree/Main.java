@@ -3,10 +3,14 @@ package id.decisiontree;
 
 import static java.lang.System.exit;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 
 import org.yaml.snakeyaml.Yaml;
@@ -16,13 +20,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 
     private static final Object NAME = "_name";
     private static Yaml yaml = new Yaml();
-    private static Map<Object, Object> map;
+    private static Map<Object, Object> map = new HashMap<>();
     
     void dfs(Map<Object, Object> m, TreeItem<String> item) {
         for (Map.Entry<Object, Object> e: m.entrySet()) {
@@ -51,8 +57,29 @@ public class Main extends Application {
             System.out.println(scanner.next());
     }
     
+    private void openFile() throws FileNotFoundException {
+        List<String> params = getParameters().getUnnamed();
+        String file = null;
+        if (params.isEmpty()) {
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Open YAML file");
+            chooser.setSelectedExtensionFilter(new ExtensionFilter("yaml files", "*.yaml"));
+            file = Optional.ofNullable(chooser.showOpenDialog(new Stage())).map(File::getPath).orElse(null);
+            if (file == null) exit(0);
+        } else {
+            file = params.get(0);
+        }
+        map = yaml.load(new FileReader(file));
+    }
+
     @Override
     public void start(Stage primaryStage) {
+        try {
+            openFile();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
         StackPane root = new StackPane();
         TreeItem<String> rootItem = new TreeItem<>((String)map.getOrDefault(NAME, "unknown"));
         dfs(map, rootItem);
@@ -65,11 +92,7 @@ public class Main extends Application {
     }
     
     public static void main(String[] args) throws IOException {
-        if (args.length == 0) {
-            usage();
-            exit(1);
-        }
-        map = yaml.load(new FileReader(args[0]));
         launch(args);
     }
+
 }

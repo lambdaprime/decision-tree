@@ -3,6 +3,10 @@
 
 lambdaprime <id.blackmesa@gmail.com>
 
+* Download
+
+You can download runnable jar from [https://github.com/lambdaprime/decision-tree/raw/master/release/decision-tree.jar]
+
 * Usage
 
 java -jar decision-tree.jar YAML_FILE
