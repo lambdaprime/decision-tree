@@ -5,7 +5,7 @@ lambdaprime <id.blackmesa@gmail.com>
 
 * Download
 
-You can download runnable jar from [https://github.com/lambdaprime/decision-tree/raw/master/release/decision-tree.jar]
+You can download runnable jar from https://github.com/lambdaprime/decision-tree/raw/master/release/decision-tree.jar
 
 * Usage
 
@@ -13,10 +13,21 @@ java -jar decision-tree.jar YAML_FILE
 
 Where: 
 
-YAML_FILE - file with serialized decision tree in YAML format
+YAML_FILE - file with serialized decision tree in YAML format.
 
-* Examples
+* Decision tree format
 
 #+BEGIN_EXAMPLE
-java -jar decision-tree.jar lang.yaml
+_name: "Which language to use for new project"
+embedded?:
+  "yes": c
+  "no": 
+    realtime?:
+      "yes": c++
+      target:
+        mobile:
+          - java
+          - objective C
+        client:
+          - java
 #+END_EXAMPLE

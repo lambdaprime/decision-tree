@@ -1,6 +1,5 @@
 package id.decisiontree;
 
-
 import static java.lang.System.exit;
 
 import java.io.File;
@@ -16,7 +15,10 @@ import java.util.Scanner;
 import org.yaml.snakeyaml.Yaml;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.StackPane;
@@ -74,6 +76,19 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        try {
+            startSafe(primaryStage);
+        } catch (Throwable e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            TextArea textArea = new TextArea(e.getMessage());
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
+            alert.getDialogPane().setContent(textArea);
+            alert.showAndWait();
+        }
+    }
+    
+    private void startSafe(Stage primaryStage) {
         try {
             openFile();
         } catch (FileNotFoundException e) {
